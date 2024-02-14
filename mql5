@@ -1,0 +1,73 @@
+
+//+------------------------------------------------------------------+
+//|                                                          SmartZone Reversal Master |
+//|                                      Copyright © 2022, Forex Robot Easy Team |
+//|                                                                  forexroboteasy.com|
+//+------------------------------------------------------------------+
+//| This trading robot is based on the SmartZone Reversal Master     |
+//| indicator which serves as a reliable tool for trade entry decisions |
+//| in the forex market. It utilizes liquidity engineering and high-   |
+//| resolution trend analysis principles to identify institutional    |
+//| key levels and track price movements relative to these levels.     |
+//| The indicator also identifies potential price reversals and aligns|
+//| them with the overall trend for increased accuracy in market      |
+//| predictions. It is particularly beneficial during ICT killzones,   |
+//| when market volatility tends to spike. Traders can apply their    |
+//| preferred reversal indicators or methods to pinpoint suitable     |
+//| entries on lower timeframes once potential trade entry points are  |
+//| identified.                                                       |
+//+------------------------------------------------------------------+
+
+// Include necessary libraries
+#include <Trade\Trade.mqh>
+#include <Indicator\SmartZoneReversalMaster.mqh>
+
+// Define global variables
+CTrade trade;  // Trade class instance
+CSmartZoneReversalMaster indicator;  // Indicator class instance
+
+// Initialize the indicator
+int OnInit()
+{
+    // Set indicator parameters
+    indicator.SetParameters(...);
+
+    // Attach the indicator to the chart
+    indicator.AttachToChart();
+
+    // Initialize trade class
+    trade.SetDeviationInPoints(10);  // Set maximum deviation in points
+
+    return(INIT_SUCCEEDED);
+}
+
+// Handle tick events
+void OnTick()
+{
+    // Check for potential trade entry points
+    if (indicator.HasPotentialEntryPoint())
+    {
+        // Get the entry point details
+        double entryPrice = indicator.GetEntryPointPrice();
+        ENUM_ORDER_TYPE orderType = indicator.GetEntryPointType();
+
+        // Place a trade based on the entry point
+        if (orderType == ORDER_TYPE_BUY)
+        {
+            trade.Buy(0.1, Symbol(), entryPrice, 0, 0, 0, 'SmartZone Reversal Master');
+        }
+        else if (orderType == ORDER_TYPE_SELL)
+        {
+            trade.Sell(0.1, Symbol(), entryPrice, 0, 0, 0, 'SmartZone Reversal Master');
+        }
+    }
+}
+
+// Handle deinitialization
+void OnDeinit(const int reason)
+{
+    // Detach the indicator from the chart
+    indicator.DetachFromChart();
+}
+
+//+------------------------------------------------------------------+
